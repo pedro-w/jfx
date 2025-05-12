@@ -158,6 +158,10 @@ public class BeanAdapter extends AbstractMap<String, Object> {
             getterMethod = localCache.getMethod(getMethodName(IS_PREFIX, key));
         }
 
+        if (getterMethod == null) {
+            // Last chance, look for bare method
+            getterMethod = localCache.getMethod(key);
+        }
         return getterMethod;
     }
 

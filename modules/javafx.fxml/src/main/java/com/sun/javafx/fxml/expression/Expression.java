@@ -37,6 +37,7 @@ import java.util.Map;
 
 import com.sun.javafx.fxml.BeanAdapter;
 import static com.sun.javafx.fxml.expression.Operator.*;
+import java.util.Objects;
 
 /**
  * Abstract base class for expressions. Also provides static methods for
@@ -569,43 +570,17 @@ public abstract class Expression<T> {
      */
     @SuppressWarnings("unchecked")
     public static <T> T get(Object namespace, KeyPath keyPath) {
-        if (keyPath == null) {
-            throw new NullPointerException();
+        Object value = namespace;
+        for (String element : keyPath) {
+            value = get(value, element);
         }
-
-        return (T)get(namespace, keyPath.iterator());
-    }
-
-    /**
-     * Returns the value at a given path within a namespace.
-     *
-     * @param namespace
-     * @param keyPathIterator
-     *
-     * @return
-     * The value at the given path, or <tt>null</tt> if no such value exists.
-     */
-    @SuppressWarnings("unchecked")
-    private static <T> T get(Object namespace, Iterator<String> keyPathIterator) {
-        if (keyPathIterator == null) {
-            throw new NullPointerException();
-        }
-
-        T value;
-        if (keyPathIterator.hasNext()) {
-            // TODO Remove cast to T when build is updated to Java 7
-            value = (T)get(get(namespace, keyPathIterator.next()), keyPathIterator);
-        } else {
-            value = (T)namespace;
-        }
-
-        return value;
+        return (T) value;
     }
 
     /**
      * Returns the value at a given key within a namespace.
      *
-     * @param namespace
+     * @param namespace a namespace object, can be null
      * @param key
      *
      * @return
@@ -613,23 +588,15 @@ public abstract class Expression<T> {
      */
     @SuppressWarnings("unchecked")
     public static <T> T get(Object namespace, String key) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
+        Objects.requireNonNull(key);
 
         Object value;
-        if (namespace instanceof List<?>) {
-            List<Object> list = (List<Object>)namespace;
+        if (namespace instanceof List<?> list) {
             value = list.get(Integer.parseInt(key));
-        } else if (namespace != null) {
-            Map<String, Object> map;
-            if (namespace instanceof Map<?, ?>) {
-                map = (Map<String, Object>)namespace;
-            } else {
-                map = new BeanAdapter(namespace);
-            }
-
+        } else if (namespace instanceof Map<?, ?> map) {
             value = map.get(key);
+        } else if (namespace != null) {
+            value = new BeanAdapter(namespace).get(key);
         } else {
             value = null;
         }
