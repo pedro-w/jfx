@@ -327,6 +327,118 @@ public class FXMLLoader_ExpressionTest {
         Widget widget4 = (Widget)fxmlLoader.getNamespace().get("widget4");
         assertEquals(widget4.getName(), "\\abc");
     }
+    @Test
+    public void testComparison_GTE() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("expression_binding_comparison.fxml"));
+        fxmlLoader.load();
 
+        ExpressionBindingController controller = fxmlLoader.getController();
 
+        Widget childWidget1 = (Widget)fxmlLoader.getNamespace().get("childWidget1");
+
+        controller.setPercentage(0.0);
+        assertEquals(false, childWidget1.isEnabled());
+
+        controller.setPercentage(0.5);
+        assertEquals(true, childWidget1.isEnabled());
+
+        controller.setPercentage(1.0);
+        assertEquals(true, childWidget1.isEnabled());
+
+    }
+@Test
+    public void testComparison_LTE() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("expression_binding_comparison.fxml"));
+        fxmlLoader.load();
+
+        ExpressionBindingController controller = fxmlLoader.getController();
+
+        Widget childWidget2 = (Widget)fxmlLoader.getNamespace().get("childWidget2");
+
+        controller.setPercentage(0.0);
+        assertEquals(true, childWidget2.isEnabled());
+
+        controller.setPercentage(0.5);
+        assertEquals(true, childWidget2.isEnabled());
+
+        controller.setPercentage(1.0);
+        assertEquals(false, childWidget2.isEnabled());
+
+    }
+    @Test
+    public void testComparison_GT() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("expression_binding_comparison.fxml"));
+        fxmlLoader.load();
+
+        ExpressionBindingController controller = fxmlLoader.getController();
+
+        Widget childWidget3 = (Widget)fxmlLoader.getNamespace().get("childWidget3");
+
+        controller.setPercentage(0.0);
+        assertEquals(false, childWidget3.isEnabled());
+
+        controller.setPercentage(0.5);
+        assertEquals(false, childWidget3.isEnabled());
+
+        controller.setPercentage(1.0);
+        assertEquals(true, childWidget3.isEnabled());
+
+    }
+    @Test
+    public void testComparisonLT() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("expression_binding_comparison.fxml"));
+        fxmlLoader.load();
+
+        ExpressionBindingController controller = fxmlLoader.getController();
+
+        Widget childWidget4 = (Widget)fxmlLoader.getNamespace().get("childWidget4");
+
+        controller.setPercentage(0.0);
+        assertEquals(true, childWidget4.isEnabled());
+
+        controller.setPercentage(0.5);
+        assertEquals(false, childWidget4.isEnabled());
+
+        controller.setPercentage(1.0);
+        assertEquals(false, childWidget4.isEnabled());
+
+    }
+    @Test
+    public void testComparison_EQ() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("expression_binding_comparison.fxml"));
+        fxmlLoader.load();
+
+        ExpressionBindingController controller = fxmlLoader.getController();
+
+        Widget childWidget5 = (Widget)fxmlLoader.getNamespace().get("childWidget5");
+
+        controller.setPercentage(0.0);
+        assertEquals(false, childWidget5.isEnabled());
+
+        controller.setPercentage(0.5);
+        assertEquals(true, childWidget5.isEnabled());
+
+        controller.setPercentage(1.0);
+        assertEquals(false, childWidget5.isEnabled());
+
+    }
+    @Test
+    public void testComparison_NEQ() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("expression_binding_comparison.fxml"));
+        fxmlLoader.load();
+
+        ExpressionBindingController controller = fxmlLoader.getController();
+
+        Widget childWidget6 = (Widget)fxmlLoader.getNamespace().get("childWidget6");
+
+        controller.setPercentage(0.0);
+        assertEquals(true, childWidget6.isEnabled());
+
+        controller.setPercentage(0.5);
+        assertEquals(false, childWidget6.isEnabled());
+
+        controller.setPercentage(1.0);
+        assertEquals(true, childWidget6.isEnabled());
+
+    }
 }
