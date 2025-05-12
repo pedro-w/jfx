@@ -499,6 +499,34 @@ public abstract class Expression<T> {
     private static final String NULL_KEYWORD = "null";
     private static final String TRUE_KEYWORD = "true";
     private static final String FALSE_KEYWORD = "false";
+    /**
+     * Compare two objects, possibly by casting. The results is similar to
+     * Comparable#compareTo, i.e. 0 if left equals right, -1 if left is less than right or
+     * 1 if left is greater than right. Number objects are cast to Double if they are
+     * floating point and Long otherwise. Anything else is compared using the
+     * Comparable interface.
+     *
+     * @param left the first object
+     * @param right the second object
+     * @return comparison result
+     * @throws ClassCastException if the objects cannot be cast to Comparable
+     * @throws NullPointerException if either right or left is null
+     */
+    private static int ucompare(Object left, Object right) {
+        if (left == right) {
+            return 0;
+        }
+        if (left instanceof Number nleft && right instanceof Number nright) {
+            if (nleft instanceof Double || nright instanceof Double) {
+                return Double.compare(nleft.doubleValue(), nright.doubleValue());
+            } else {
+                return Long.compare(nleft.longValue(), nright.longValue());
+            }
+        } else {
+            Comparable ca = (Comparable) left;
+            return ca.compareTo(right);
+        }
+    }
 
     /**
      * Evaluates the expression.
@@ -1101,8 +1129,8 @@ public abstract class Expression<T> {
      * @param right
      */
     public static BinaryExpression equalTo(Expression left, Expression right) {
-        return new BinaryExpression<Comparable, Boolean>(left, right, (Comparable leftValue, Comparable rightValue) ->
-                leftValue.compareTo(rightValue) == 0
+        return new BinaryExpression<>(left, right, (Comparable leftValue, Comparable rightValue) ->
+                ucompare(leftValue, rightValue) == 0
             );
     }
 
@@ -1143,8 +1171,8 @@ public abstract class Expression<T> {
      * @param right
      */
     public static BinaryExpression notEqualTo(Expression left, Expression right) {
-        return new BinaryExpression<Comparable, Boolean>(left, right, (leftValue, rightValue) ->
-                 leftValue.compareTo(rightValue) != 0
+        return new BinaryExpression<>(left, right, (leftValue, rightValue) ->
+                 ucompare(leftValue, rightValue) != 0
         );
     }
 
@@ -1185,8 +1213,8 @@ public abstract class Expression<T> {
      * @param right
      */
     public static BinaryExpression greaterThan(Expression left, Expression right) {
-        return new BinaryExpression<Comparable, Boolean>(left, right, (leftValue, rightValue) ->
-                leftValue.compareTo(rightValue) > 0
+        return new BinaryExpression<>(left, right, (leftValue, rightValue) ->
+                ucompare(leftValue, rightValue) > 0
         );
     }
 
@@ -1227,8 +1255,8 @@ public abstract class Expression<T> {
      * @param right
      */
     public static BinaryExpression greaterThanOrEqualTo(Expression left, Expression right) {
-        return new BinaryExpression<Comparable, Boolean>(left, right, (leftValue, rightValue) ->
-                leftValue.compareTo(rightValue) >= 0
+        return new BinaryExpression<>(left, right, (leftValue, rightValue) ->
+                ucompare(leftValue, rightValue) >= 0
         );
     }
 
@@ -1269,8 +1297,8 @@ public abstract class Expression<T> {
      * @param right
      */
     public static BinaryExpression lessThan(Expression left, Expression right) {
-        return new BinaryExpression<Comparable, Boolean>(left, right, (leftValue, rightValue) ->
-                leftValue.compareTo(rightValue) < 0
+        return new BinaryExpression<>(left, right, (leftValue, rightValue) ->
+                ucompare(leftValue, rightValue) < 0
         );
     }
 
@@ -1311,8 +1339,8 @@ public abstract class Expression<T> {
      * @param right
      */
     public static BinaryExpression lessThanOrEqualTo(Expression left, Expression right) {
-        return new BinaryExpression<Comparable, Boolean>(left, right, (leftValue, rightValue) ->
-                leftValue.compareTo(rightValue) <= 0
+        return new BinaryExpression<>(left, right, (leftValue, rightValue) ->
+                ucompare(leftValue, rightValue) <= 0
         );
     }
 
